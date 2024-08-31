@@ -20,6 +20,10 @@ dependencies {
     // JUnit for testing
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
+
+    implementation("org.slf4j:slf4j-api:2.0.0-alpha1")
+    implementation("org.slf4j:slf4j-simple:2.0.0-alpha1") // or any other SLF4J binding
+
 }
 
 tasks.test {

@@ -1,23 +1,33 @@
 package com.learning;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.charset.StandardCharsets;
 
 public class SubtitleGenerator {
-    public static void generateSRT(String transcript, String outputSRTPath) throws IOException {
-        String[] lines = transcript.split("\\. ");
-        StringBuilder srtContent = new StringBuilder();
+    public static void generateSRT(String transcript, String subtitleFilePath) throws IOException {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(subtitleFilePath))) {
+            String[] lines = transcript.split("\n");
+            int counter = 1;
+            int startTime = 0;
 
-        int counter = 1;
-        for (String line : lines) {
-            srtContent.append(counter++).append("\n");
-            srtContent.append("00:00:").append(String.format("%02d", (counter * 2) % 60)).append(",000 --> 00:00:")
-                    .append(String.format("%02d", (counter * 2 + 2) % 60)).append(",000").append("\n");
-            srtContent.append(line).append("\n\n");
+            for (String line : lines) {
+                writer.write(counter + "\n");
+                writer.write(formatTime(startTime) + " --> " + formatTime(startTime + 2000) + "\n"); // Example timing
+                writer.write(line + "\n\n");
+                startTime += 2000; // Increment start time for each subtitle
+                counter++;
+            }
         }
 
-        Files.write(Paths.get(outputSRTPath), srtContent.toString().getBytes(StandardCharsets.UTF_8));
+        System.out.println("SRT file generated successfully.");
+    }
+
+    private static String formatTime(int millis) {
+        int hours = millis / (1000 * 60 * 60);
+        int minutes = (millis % (1000 * 60 * 60)) / (1000 * 60);
+        int seconds = (millis % (1000 * 60)) / 1000;
+        int milliseconds = millis % 1000;
+        return String.format("%02d:%02d:%02d,%03d", hours, minutes, seconds, milliseconds);
     }
 }
